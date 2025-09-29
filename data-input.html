@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Input | HMPI App</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Heavy Metal Data Input</h1>
+            <p class="tagline">Enter groundwater sample data for pollution analysis</p>
+            <div class="header-buttons">
+                <a href="index.html" class="cta-button secondary">← Back to Home</a>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="data-input-options">
+            <div class="option-card active" id="manualOption">
+                <div class="option-icon">📝</div>
+                <h3>Manual Data Entry</h3>
+                <p>Enter individual sample data</p>
+            </div>
+            <div class="option-card" id="csvOption">
+                <div class="option-icon">📁</div>
+                <h3>CSV File Upload</h3>
+                <p>Upload multiple samples</p>
+            </div>
+        </div>
+
+        <!-- Manual Data Entry Form -->
+        <div id="manualForm" class="input-form active">
+            <form id="heavyMetalForm">
+                <div class="form-section">
+                    <h3>Sample Information</h3>
+                    <div class="form-grid">
+                        <div class="form-group full-width">
+                            <label for="location">Location Name *</label>
+                            <input type="text" id="location" name="location" required 
+                                   placeholder="Enter sampling location (e.g., Well A, River Site B)">
+                        </div>
+                        <div class="form-group">
+                            <label for="latitude">Latitude (Optional)</label>
+                            <input type="number" id="latitude" name="latitude" step="0.000001" 
+                                   placeholder="e.g., 40.7128">
+                        </div>
+                        <div class="form-group">
+                            <label for="longitude">Longitude (Optional)</label>
+                            <input type="number" id="longitude" name="longitude" step="0.000001" 
+                                   placeholder="e.g., -74.0060">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3>Heavy Metal Concentrations (mg/L)</h3>
+                    <div class="concentration-info">
+                        <p>Enter concentrations in milligrams per liter (mg/L)</p>
+                    </div>
+                    <div class="metals-grid">
+                        <div class="form-group">
+                            <label for="arsenic">Arsenic (As)</label>
+                            <input type="number" id="arsenic" name="arsenic" step="0.0001" min="0" 
+                                   placeholder="0.0000">
+                            <small>WHO Limit: 0.01 mg/L</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="lead">Lead (Pb)</label>
+                            <input type="number" id="lead" name="lead" step="0.0001" min="0" 
+                                   placeholder="0.0000">
+                            <small>WHO Limit: 0.01 mg/L</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="mercury">Mercury (Hg)</label>
+                            <input type="number" id="mercury" name="mercury" step="0.0001" min="0" 
+                                   placeholder="0.0000">
+                            <small>WHO Limit: 0.006 mg/L</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="cadmium">Cadmium (Cd)</label>
+                            <input type="number" id="cadmium" name="cadmium" step="0.0001" min="0" 
+                                   placeholder="0.0000">
+                            <small>WHO Limit: 0.003 mg/L</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="chromium">Chromium (Cr)</label>
+                            <input type="number" id="chromium" name="chromium" step="0.0001" min="0" 
+                                   placeholder="0.0000">
+                            <small>WHO Limit: 0.05 mg/L</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="copper">Copper (Cu)</label>
+                            <input type="number" id="copper" name="copper" step="0.0001" min="0" 
+                                   placeholder="0.0000">
+                            <small>WHO Limit: 2.0 mg/L</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="zinc">Zinc (Zn)</label>
+                            <input type="number" id="zinc" name="zinc" step="0.0001" min="0" 
+                                   placeholder="0.0000">
+                            <small>WHO Limit: 3.0 mg/L</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="nickel">Nickel (Ni)</label>
+                            <input type="number" id="nickel" name="nickel" step="0.0001" min="0" 
+                                   placeholder="0.0000">
+                            <small>WHO Limit: 0.07 mg/L</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-secondary" id="addSample">
+                        <span class="btn-icon">➕</span>
+                        Add Sample
+                    </button>
+                    <button type="button" class="btn-secondary" id="downloadTemplate">
+                        <span class="btn-icon">📥</span>
+                        Download CSV Template
+                    </button>
+                    <button type="button" class="btn-primary" id="calculateResults">
+                        <span class="btn-icon">📊</span>
+                        Calculate Results
+                    </button>
+                </div>
+            </form>
+
+            <div id="sampleList" class="sample-list">
+                <div class="sample-list-header">
+                    <h4>Added Samples</h4>
+                    <span class="sample-count" id="sampleCount">0 samples</span>
+                </div>
+                <div id="samplesContainer" class="samples-container">
+                    <div class="no-samples">
+                        <div class="no-samples-icon">📝</div>
+                        <p>No samples added yet</p>
+                        <small>Add your first sample using the form above</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CSV Upload Form -->
+        <div id="csvForm" class="input-form">
+            <div class="csv-upload-area">
+                <div class="upload-box" id="uploadBox">
+                    <div class="upload-icon">📁</div>
+                    <h4>Upload CSV File</h4>
+                    <p>Drag & drop your CSV file here or click to browse</p>
+                    <input type="file" id="csvFile" accept=".csv" hidden>
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('csvFile').click()">
+                        Browse Files
+                    </button>
+                </div>
+                
+                <div class="upload-info">
+                    <div class="upload-requirements">
+                        <h5>CSV File Requirements:</h5>
+                        <ul>
+                            <li>File must be in CSV format</li>
+                            <li>Include required columns: location (required)</li>
+                            <li>Optional columns: latitude, longitude</li>
+                            <li>Metal columns: arsenic, lead, mercury, cadmium, chromium, copper, zinc, nickel</li>
+                            <li>Concentrations should be in mg/L</li>
+                            <li>Maximum file size: 10MB</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="sample-csv-preview">
+                        <h5>Expected CSV Format:</h5>
+                        <pre>location,latitude,longitude,arsenic,lead,mercury,cadmium,chromium,copper,zinc,nickel
+Well A,40.7128,-74.0060,0.010,0.015,0.001,0.005,0.050,1.300,5.000,0.020
+River Site B,,,0.005,0.008,0.0005,0.002,0.020,0.800,3.500,0.015</pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="button" class="btn-secondary" id="downloadTemplateCSV">
+                    <span class="btn-icon">📥</span>
+                    Download CSV Template
+                </button>
+                <button type="button" class="btn-primary" id="calculateCSV">
+                    <span class="btn-icon">📊</span>
+                    Calculate Results
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>HMPI App | Data Input Module | WHO Guidelines Compliant</p>
+        </div>
+    </footer>
+
+    <script>
+    // Sample data storage
+    let samples = JSON.parse(localStorage.getItem('hmpiSamples')) || [];
+    let sampleCount = samples.length;
+
+    // Initialize the page
+    document.addEventListener('DOMContentLoaded', function() {
+        updateSampleList();
+        setupEventListeners();
+    });
+
+    // Setup event listeners
+    function setupEventListeners() {
+        // Tab switching
+        document.getElementById('manualOption').addEventListener('click', switchToManual);
+        document.getElementById('csvOption').addEventListener('click', switchToCSV);
+
+        // Manual form actions
+        document.getElementById('addSample').addEventListener('click', addSample);
+        document.getElementById('downloadTemplate').addEventListener('click', downloadCSVTemplate);
+        document.getElementById('heavyMetalForm').addEventListener('submit', calculateManualResults);
+        document.getElementById('calculateResults').addEventListener('click', calculateManualResults);
+
+        // CSV form actions
+        document.getElementById('downloadTemplateCSV').addEventListener('click', downloadCSVTemplate);
+        document.getElementById('calculateCSV').addEventListener('click', calculateCSVResults);
+        document.getElementById('csvFile').addEventListener('change', handleFileUpload);
+    }
+
+    // Tab switching functions
+    function switchToManual() {
+        document.querySelectorAll('.option-card').forEach(card => card.classList.remove('active'));
+        document.querySelectorAll('.input-form').forEach(form => form.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('manualForm').classList.add('active');
+    }
+
+    function switchToCSV() {
+        document.querySelectorAll('.option-card').forEach(card => card.classList.remove('active'));
+        document.querySelectorAll('.input-form').forEach(form => form.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById('csvForm').classList.add('active');
+    }
+
+    // Add sample functionality
+    function addSample() {
+        const form = document.getElementById('heavyMetalForm');
+        
+        // Get form values
+        const location = document.getElementById('location').value;
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+        
+        // Validate required fields
+        if (!location) {
+            alert('Please enter a location name');
+            return;
+        }
+
+        // Create sample object
+        const sample = {
+            location: location,
+            latitude: latitude ? parseFloat(latitude) : null,
+            longitude: longitude ? parseFloat(longitude) : null,
+            arsenic: document.getElementById('arsenic').value ? parseFloat(document.getElementById('arsenic').value) : 0,
+            lead: document.getElementById('lead').value ? parseFloat(document.getElementById('lead').value) : 0,
+            mercury: document.getElementById('mercury').value ? parseFloat(document.getElementById('mercury').value) : 0,
+            cadmium: document.getElementById('cadmium').value ? parseFloat(document.getElementById('cadmium').value) : 0,
+            chromium: document.getElementById('chromium').value ? parseFloat(document.getElementById('chromium').value) : 0,
+            copper: document.getElementById('copper').value ? parseFloat(document.getElementById('copper').value) : 0,
+            zinc: document.getElementById('zinc').value ? parseFloat(document.getElementById('zinc').value) : 0,
+            nickel: document.getElementById('nickel').value ? parseFloat(document.getElementById('nickel').value) : 0,
+            timestamp: new Date().toISOString()
+        };
+
+        // Add to samples array
+        samples.push(sample);
+        sampleCount = samples.length;
+        
+        // Save to localStorage
+        localStorage.setItem('hmpiSamples', JSON.stringify(samples));
+        
+        // Update UI
+        updateSampleList();
+        
+        // Clear form for next entry
+        form.reset();
+        
+        // Show success message
+        showNotification(`Sample "${sample.location}" added successfully!`, 'success');
+    }
+
+    // Update sample list display
+    function updateSampleList() {
+        const container = document.getElementById('samplesContainer');
+        const countElement = document.getElementById('sampleCount');
+        
+        countElement.textContent = `${sampleCount} sample${sampleCount !== 1 ? 's' : ''}`;
+        
+        if (sampleCount === 0) {
+            container.innerHTML = `
+                <div class="no-samples">
+                    <div class="no-samples-icon">📝</div>
+                    <p>No samples added yet</p>
+                    <small>Add your first sample using the form above</small>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = '';
+        samples.forEach((sample, index) => {
+            const sampleDiv = document.createElement('div');
+            sampleDiv.className = 'sample-item';
+            sampleDiv.innerHTML = `
+                <div class="sample-info">
+                    <strong>${sample.location}</strong>
+                    ${sample.latitude && sample.longitude ? 
+                        `<small>${sample.latitude.toFixed(4)}, ${sample.longitude.toFixed(4)}</small>` : 
+                        '<small>No coordinates</small>'
+                    }
+                </div>
+                <button type="button" class="remove-sample" onclick="removeSample(${index})">×</button>
+            `;
+            container.appendChild(sampleDiv);
+        });
+    }
+
+    // Remove sample
+    function removeSample(index) {
+        if (confirm(`Are you sure you want to remove sample "${samples[index].location}"?`)) {
+            samples.splice(index, 1);
+            sampleCount = samples.length;
+            localStorage.setItem('hmpiSamples', JSON.stringify(samples));
+            updateSampleList();
+            showNotification('Sample removed successfully!', 'info');
+        }
+    }
+
+    // Download CSV template
+    function downloadCSVTemplate() {
+        const csvContent = `location,latitude,longitude,arsenic,lead,mercury,cadmium,chromium,copper,zinc,nickel
+Well A,40.7128,-74.0060,0.010,0.015,0.001,0.005,0.050,1.300,5.000,0.020
+River Site B,,,0.005,0.008,0.0005,0.002,0.020,0.800,3.500,0.015`;
+
+        const blob = new Blob([csvContent], { type: 'text/csv' });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'hmpi_data_template.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+        
+        showNotification('CSV template downloaded successfully!', 'success');
+    }
+
+    // Handle file upload
+    function handleFileUpload(e) {
+        const file = e.target.files[0];
+        if (file) {
+            if (!file.name.toLowerCase().endsWith('.csv')) {
+                alert('Please select a CSV file');
+                clearFile();
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                alert('File size must be less than 10MB');
+                clearFile();
+                return;
+            }
+
+            document.getElementById('uploadBox').innerHTML = `
+                <div class="upload-success">✓</div>
+                <h4>File Ready</h4>
+                <p>${file.name}</p>
+                <button type="button" class="btn-secondary" onclick="clearFile()">Change File</button>
+            `;
+        }
+    }
+
+    // Clear uploaded file
+    function clearFile() {
+        document.getElementById('csvFile').value = '';
+        document.getElementById('uploadBox').innerHTML = `
+            <div class="upload-icon">📁</div>
+            <h4>Upload CSV File</h4>
+            <p>Drag & drop your CSV file here or click to browse</p>
+            <button type="button" class="btn-secondary" onclick="document.getElementById('csvFile').click()">Browse Files</button>
+        `;
+    }
+
+    // Calculate results for manual entry - SIMPLIFIED
+    function calculateManualResults(e) {
+        e.preventDefault();
+        
+        if (samples.length === 0) {
+            alert('Please add at least one sample before calculating results');
+            return;
+        }
+
+        // Save and redirect immediately
+        localStorage.setItem('hmpiSamples', JSON.stringify(samples));
+        window.location.href = 'results.html';
+    }
+
+    // Calculate results for CSV upload - SIMPLIFIED
+    function calculateCSVResults() {
+        const file = document.getElementById('csvFile').files[0];
+        if (!file) {
+            alert('Please select a CSV file first');
+            return;
+        }
+
+        // For now, just save current samples and redirect
+        // CSV processing can be added later
+        localStorage.setItem('hmpiSamples', JSON.stringify(samples));
+        window.location.href = 'results.html';
+    }
+
+    // Show notification
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = `notification notification-${type}`;
+        notification.innerHTML = `
+            <span class="notification-message">${message}</span>
+            <button class="notification-close" onclick="this.parentElement.remove()">×</button>
+        `;
+        
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            if (notification.parentElement) {
+                notification.remove();
+            }
+        }, 3000);
+    }
+</script>
+</body>
+</html>
