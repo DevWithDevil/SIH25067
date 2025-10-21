@@ -662,13 +662,23 @@
             };
 
             let hmpi = 0;
+            let metalCount = 0;
+    
             for (const [metal, concentration] of Object.entries(sample)) {
-                if (whoLimits[metal] && concentration) {
-                    hmpi += (concentration / whoLimits[metal]);
+                if (whoLimits[metal] && concentration && !isNaN(concentration) && concentration > 0) {
+                    // HMPI formula: Σ (Concentration / Permissible Limit)
+                    const contaminationIndex = concentration / whoLimits[metal];
+                    hmpi += contaminationIndex;
+                    metalCount++;
                 }
             }
-            
-            return Math.round(hmpi * 10);
+    
+            // Calculate average and scale appropriately
+            if (metalCount > 0) {
+        hmpi = (hmpi / metalCount) ; 
+            }
+    
+            return Math.round(hmpi);
         }
 
         function categorizeHMPI(hmpi) {
